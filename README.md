@@ -2,7 +2,58 @@
 <h2 align="center">vite-plugin-require-support(WIP)</h2>
 <br>
 
-a vite plugin supports the use of require syntax.
+A vite plugin supports the use of `require syntax` in vite.
+
+## Design
+
+```
+- const foo = require('./a/b/foo.js')
++ import Xs02j_foo from './a/b/foo.js'
++ const foo = Xs02j_foo
+```
+
+### Appointment
+
+#### `requirePath`
+
+- `'./a/b/foo.js'` regard as `requirePath`
+
+- `requirePath` = `path` + `module ID` + `suffix` eg: `./a/b/` + `foo` + `js`
+
+- `requirePath` have two shapes: `string literal` and `template literal`
+
+#### `moduleVariable`
+
+- `Xs02j_foo` regard as `moduleVariable`
+
+- `moduleVariable` = `hash` + `_` + `originVariable` eg: `Xs02j` + `_` + `foo`
+
+### Reason
+
+- `requirePath` = `path` + `module ID` + `suffix`
+
+  - when there are multiple module requests with similar appearance, the design is more flexible to distinguish different module request paths.
+
+  - comparison algorithm priority of module request path: `module ID` > `suffix` > `path`
+
+  ```
+  const img1 = require('./a/b/foo.png')
+  const img2 = require('./a/s/foo.png')
+  const img2 = require('./a/b/foo.jpg')
+  ```
+
+- `requirePath` have two shapes: `string literal` and `template literal`
+
+  ```
+  const foo = require('foo') // string literal
+  const a = 'bar'
+  const zoo = require(`${bar}/b/c/zoo`) // template literal
+  ```
+
+- `moduleVariable` = `hash` + `_` + `originVariable`
+
+  - because variable `moduleVariable` is generated internally by the plugin, in order to prevent the generated variable from conflicting with the variable declared by the user, I add `hash` to variable.( or Symbol?)
+
 
 ## Git Contribution submission specification
 
