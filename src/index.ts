@@ -9,7 +9,7 @@ export interface Configuration {
   filters?: RegExp
 }
 
-export interface requireObj {
+interface requireObj {
   variable: string
   requirePath: string
 }
@@ -25,18 +25,37 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
 
       tarverse(ast, {
         enter(path) {
-          if (path.isIdentifier({ name: 'require' }) && t.isVariableDeclarator(path.parentPath.parentPath)) {
-            const variable: string = ((path.parentPath.parentPath.node as t.VariableDeclarator).id as t.Identifier).name
-            const requirePath: string = ((path.parentPath.node as t.CallExpression).arguments[0] as t.StringLiteral).value
+          // Processing the require syntax.
+          if (path.isIdentifier({ name: 'require' }) && t.isCallExpression(path.parentPath)) {
+            // case: const foo = require('foo')
+            if (t.isVariableDeclarator(path.parentPath.parentPath)) {
+              const variable: string = ((path.parentPath.parentPath.node as t.VariableDeclarator).id as t.Identifier).name
+              const requirePath: string = ((path.parentPath.node as t.CallExpression).arguments[0] as t.StringLiteral).value
 
-            requireList.unshift({
-              variable: `${importVariableHash}_${variable}`,
-              requirePath,
-            })
+              requireList.unshift({
+                variable: `${importVariableHash}_${variable}`,
+                requirePath,
+              })
 
-            // - const foo = require('foo')
-            // + const hase_foo = require('foo')
-            path.parentPath.replaceWithSourceString(`${importVariableHash}_${variable}`)
+              // - const foo = require('foo')
+              // + const hase_foo = require('foo')
+              path.parentPath.replaceWithSourceString(`${importVariableHash}_${variable}`)
+            }
+
+            // case: const obj = { foo: require('foo') }
+            if (t.isObjectProperty(path.parentPath.parentPath)) {
+              const variable: string = ((path.parentPath.parentPath.node as t.ObjectProperty).key as t.Identifier).name
+              const requirePath: string = ((path.parentPath.node as t.CallExpression).arguments[0] as t.StringLiteral).value
+
+              requireList.unshift({
+                variable: `${importVariableHash}_${variable}`,
+                requirePath,
+              })
+
+              // - const obj = { foo: require('foo') }
+              // + const obj = { foo: hash_foo }
+              path.parentPath.replaceWithSourceString(`${importVariableHash}_${variable}`)
+            }
           }
         },
       })

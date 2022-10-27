@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-require-support",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "a vite plugin supports the use of require syntax.",
   "author": "chenjiezi <892774940@qq.com>",
   "license": "ISC",
