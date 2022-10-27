@@ -47,7 +47,7 @@ A vite plugin supports the use of `require syntax` in vite.
   ```
   const foo = require('foo') // string literal
   const a = 'bar'
-  const zoo = require(`${bar}/b/c/zoo`) // template literal
+  const zoo = require(`${a}/b/c/zoo`) // template literal
   ```
 
 - `moduleVariable` = `hash` + `_` + `originVariable`
