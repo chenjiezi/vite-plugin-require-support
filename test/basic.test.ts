@@ -30,3 +30,23 @@ test('object property', async () => {
   `)
 })
 
+test('conditional expression', async () => {
+  const source = `
+    const foo = true ? require('bar') : ''
+  `
+  const { code } = await requireSupport().transform(source)
+  expect(code).toMatchInlineSnapshot('"const foo = true ? require(\'bar\') : \'\';"')
+})
+
+test('return statement', async () => {
+  const source = `
+    function foo () { return require('bar') }
+  `
+  const { code } = await requireSupport().transform(source)
+  expect(code).toMatchInlineSnapshot(`
+    "function foo() {
+      return require('bar');
+    }"
+  `)
+})
+
