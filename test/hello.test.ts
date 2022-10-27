@@ -1,9 +1,16 @@
 import { expect, test } from 'vitest'
+import requireSupport from '../src/index'
 
-test('1+1', () => {
-  expect(1 + 1).toBe(2)
-})
-
-test('1+2', () => {
-  expect(1 + 2).toBe(3)
+test('case1', async () => {
+  const source = `
+    const foo = require('foo');
+    const bar = require('bar');
+  `
+  const { code } = await requireSupport().transform(source)
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_foo from \\"foo\\";
+    import hash_bar from \\"bar\\";
+    const foo = hash_foo;
+    const bar = hash_bar;"
+  `)
 })
