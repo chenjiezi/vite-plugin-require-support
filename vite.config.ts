@@ -3,5 +3,8 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   test: {
+    snapshotFormat: {
+      printBasicPrototype: true,
+    },
   },
 })
