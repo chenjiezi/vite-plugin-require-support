@@ -23,33 +23,6 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
 
       const requireList: requireObj[] = []
 
-      // reuqirePath由 路径 + 模块标识 + 模块后缀
-      // reuqirePath存在两种形态：纯字符串、模板字符串
-      // 需要判断require()是否为自定义函数
-      // 如果是 按需导出，在转换成import，可以优化为import { a as hash_a, b as hash_b } from 'c'
-      // 如果 按需导出 和 默认导出 都存在，那么只转换成 importn hash_b from 'b'
-      /**
-       * 如何判断是 按需导出 和 默认导出 都存在呢？？？
-       * 1. 同一个模块，存在 CallExpression 和 MemberExpression, 那么就是 两种导出都存在
-       * const a = require('b').c; const d = require('b') => importn hash_b from 'b'
-       */
-
-      // CommonJS 模块加载 ES6 模块
-      //  (async () => {
-      //   await import('./my-app.mjs');
-      // })();
-
-      // const a = require(b + 'c')
-      // const a = require('b').c
-      // const a = require(b + 'c').d
-
-      // const a = require('a/b/c/d.js')
-      // const a = require('a/b/s/d.js')
-
-      // 按需导出
-      // const a = require('b').c
-      // const d = require('b').e
-
       tarverse(ast, {
         enter(path) {
           // Processing the require syntax.
