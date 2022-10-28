@@ -53,6 +53,26 @@ A vite plugin supports the use of `require syntax` in vite.
 - `moduleVariable` = `hash` + `_` + `originVariable`
 
   - because variable `moduleVariable` is generated internally by the plugin, in order to prevent the generated variable from conflicting with the variable declared by the user, I add `hash` to variable.( or Symbol?)
+  
+  - 
+
+- export mode transform
+  
+  ```
+    // case1
+    - const foo = require('foo')
+    - const bar = require('foo').fn
+    + import SDWS_foo, { fn as SDC_foo_fn } from 'foo'
+    + const foo = SDWS_foo
+    + const bar = SDC_foo_fn
+
+    // case2
+    - const a = require('foo').a
+    - const b = require('foo').b
+    + import { a as SDC_foo_a, b as SKDsk_foo_b } from 'foo'
+    + const a = SDC_foo_a
+    + const b = SKDsk_foo_b
+  ```
 
 
 ## Git Contribution submission specification

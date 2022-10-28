@@ -26,7 +26,7 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
       // reuqirePath由 路径 + 模块标识 + 模块后缀
       // reuqirePath存在两种形态：纯字符串、模板字符串
       // 需要判断require()是否为自定义函数
-      // 如果是 按需导出，在转换成import，可以优化为import {} from ''
+      // 如果是 按需导出，在转换成import，可以优化为import { a as hash_a, b as hash_b } from 'c'
       // 如果 按需导出 和 默认导出 都存在，那么只转换成 importn hash_b from 'b'
       /**
        * 如何判断是 按需导出 和 默认导出 都存在呢？？？
