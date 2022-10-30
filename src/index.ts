@@ -1,32 +1,26 @@
 import { parse } from '@babel/parser'
+import type { NodePath } from '@babel/traverse'
 import tarverse from '@babel/traverse'
 import generator from '@babel/generator'
 import * as t from '@babel/types'
+import type * as myType from './types'
+import { parseRequirePath } from './utils'
 
 const pluginName = 'vite-plugin-require-support'
 const importVariableHash = 'hash'
-export interface Configuration {
-  filters?: RegExp
-}
 
-interface requireObj {
-  variable: string
-  requirePath: string
-}
-
-export default function (configuration: Configuration = { filters: /.ts$/ }) {
+export default function (configuration: myType.Configuration = { filters: /.ts$/ }) {
   return {
     name: pluginName,
     async transform(code: string, id?: string | number) {
       let newCode = code
       const ast = parse(code, { sourceType: 'module' })
 
-      const requireList: requireObj[] = []
+      const requireList: myType.requireObj[] = []
       const declarationVariable: { [key: string]: string } = {}
 
       tarverse(ast, {
-        enter(path) {
-          // TODO: ?
+        enter(path: NodePath<t.Node>) {
           // use of templateIteral
           if (t.isStringLiteral(path.node) && t.isVariableDeclarator(path.parentPath?.node)) {
             const variable = ((path.parentPath?.node as t.VariableDeclarator).id as t.Identifier).name
@@ -36,52 +30,32 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
 
           // processing the require syntax.
           if (path.isIdentifier({ name: 'require' }) && t.isCallExpression(path.parentPath)) {
+            const argument = (path.parentPath.node as t.CallExpression).arguments[0] as t.StringLiteral | t.TemplateLiteral
+            const isTemplateLiteral = t.isTemplateLiteral(argument)
+            let templateLiteral = ''
+
             // handle requirePath of templateIteral
-            // eg: require(`${Atl}/x/c.js`) => require('a/x/c.js')
-            if (t.isTemplateLiteral(path.node)) {
-              const expressions = (path.node as t.TemplateLiteral).expressions
-              const quasis = (path.node as t.TemplateLiteral).quasis
-
-              let temp = ''
+            if (isTemplateLiteral) {
+              const expressions = argument.expressions
+              const quasis = argument.quasis
               for (let i = 0; i < quasis.length; i++) {
-                temp += (quasis[i] as t.TemplateElement).value.raw
-                temp += declarationVariable[(expressions[i] as t.Identifier).name]
+                templateLiteral += quasis[i].value.raw
+                templateLiteral += expressions[i] ? declarationVariable[(expressions[i] as t.Identifier).name] : ''
               }
-
-              // (path.node as t.TemplateLiteral).replaceWithSourceString(temp)
             }
 
+            const originalPath = isTemplateLiteral ? templateLiteral : argument.value
             // parse requirePath
-            // eg: './a/b/c.js' => { path: './a/b/', moduleId: 'c', suffix: '.js', value: './a/b/c.js' }
+            const pathElement = parseRequirePath(originalPath)
+            // TODO:
+            const moduleVariable = `${importVariableHash}_${pathElement.moduleId}`
+            requireList.unshift({ originalPath, moduleVariable, pathElement })
 
-            // case1: const foo = require('foo')
-            if (t.isVariableDeclarator(path.parentPath.parentPath)) {
-              const variable: string = ((path.parentPath.parentPath.node as t.VariableDeclarator).id as t.Identifier).name
-              const requirePath: string = ((path.parentPath.node as t.CallExpression).arguments[0] as t.StringLiteral).value
-
-              requireList.unshift({
-                variable: `${importVariableHash}_${variable}`,
-                requirePath,
-              })
-
-              // - const foo = require('foo')
-              // + const foo = hash_foo
-              path.parentPath.replaceWithSourceString(`${importVariableHash}_${variable}`)
-            }
-
-            // case2: const obj = { foo: require('foo') }
-            if (t.isObjectProperty(path.parentPath.parentPath)) {
-              const variable: string = ((path.parentPath.parentPath.node as t.ObjectProperty).key as t.Identifier).name
-              const requirePath: string = ((path.parentPath.node as t.CallExpression).arguments[0] as t.StringLiteral).value
-
-              requireList.unshift({
-                variable: `${importVariableHash}_${variable}`,
-                requirePath,
-              })
-
-              // - const obj = { foo: require('foo') }
-              // + const obj = { foo: hash_foo }
-              path.parentPath.replaceWithSourceString(`${importVariableHash}_${variable}`)
+            // case: const foo = require('module') || const obj = { foo: require('module') }
+            if (t.isVariableDeclarator(path.parentPath.parentPath) || t.isObjectProperty(path.parentPath.parentPath)) {
+              // - const foo = require('module') || const obj = { foo: require('module') }
+              // + const foo = hash_module || const obj = { foo: hash_module }
+              path.parentPath.replaceWithSourceString(moduleVariable)
             }
           }
         },
@@ -89,11 +63,11 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
 
       // Inset import at the top of source code.
       // eg. import hash_foo from 'foo'
-      // for (const requireItem of requireList) {
-      //   const importDefaultSpecifier = t.importDefaultSpecifier(t.identifier(requireItem.variable))
-      //   const importDeclaration = t.importDeclaration([importDefaultSpecifier], t.stringLiteral(requireItem.requirePath))
-      //   ast.program.body.unshift(importDeclaration)
-      // }
+      for (const requireItem of requireList) {
+        const importDefaultSpecifier = t.importDefaultSpecifier(t.identifier(requireItem.moduleVariable))
+        const importDeclaration = t.importDeclaration([importDefaultSpecifier], t.stringLiteral(requireItem.originalPath))
+        ast.program.body.unshift(importDeclaration)
+      }
 
       const output = generator(ast)
       newCode = output.code
