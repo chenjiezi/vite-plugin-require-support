@@ -1,3 +1,5 @@
+import type * as t from '@babel/types'
+
 export interface Configuration {
   filters?: RegExp
 }
@@ -13,3 +15,7 @@ export interface PathElement {
   prefixPath?: string
   suffix?: string
 }
+
+export interface Obj { [key: string]: string }
+
+export type Leaf = t.BinaryExpression | t.Identifier | t.StringLiteral
