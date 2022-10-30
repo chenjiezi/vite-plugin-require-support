@@ -29,7 +29,7 @@ test('object property', async () => {
     };"
   `)
 })
-// TODO:
+
 test('conditional expression', async () => {
   const source = `
     const foo = true ? require('bar') : ''
@@ -37,10 +37,10 @@ test('conditional expression', async () => {
   const { code } = await requireSupport().transform(source)
   expect(code).toMatchInlineSnapshot(`
     "import hash_bar from \\"bar\\";
-    const foo = true ? require('bar') : '';"
+    const foo = true ? hash_bar : '';"
   `)
 })
-// TODO:
+
 test('return statement', async () => {
   const source = `
     function foo () { return require('bar') }
@@ -49,7 +49,7 @@ test('return statement', async () => {
   expect(code).toMatchInlineSnapshot(`
     "import hash_bar from \\"bar\\";
     function foo() {
-      return require('bar');
+      return hash_bar;
     }"
   `)
 })
