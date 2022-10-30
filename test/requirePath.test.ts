@@ -7,20 +7,25 @@ test('template literal', async () => {
   const { code } = await requireSupport().transform(source)
 
   expect(code).toMatchInlineSnapshot(`
-    "import hash_a/x/b.js from \\"a/x/b.js\\";
+    "import hash_b from \\"a/x/b.js\\";
     const Atl = 'a';
     const Btl = 'b';
-    const bar = hash_a / x / b.js;"
+    const bar = hash_b;"
   `)
 })
 
-// test('template literal', async () => {
-//   const source = `
-//     const Atl = 'a'
-//     const Btl = 'b'
-//     const bar = require(Atl + '/x/' + Btl)
-//   `
-//   const { code } = await requireSupport().transform(source)
+test('binary expression', async () => {
+  const source = `
+    const Atl = 'a'
+    const Btl = 'b'
+    const bar = require(Atl + '/x/' + Btl)
+  `
+  const { code } = await requireSupport().transform(source)
 
-//   expect(code).toMatchInlineSnapshot()
-// })
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_b from \\"a/x/b\\";
+    const Atl = 'a';
+    const Btl = 'b';
+    const bar = hash_b;"
+  `)
+})
