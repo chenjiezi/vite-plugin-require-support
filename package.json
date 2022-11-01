@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-require-support",
   "type": "module",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "a vite plugin supports the use of require syntax.",
   "author": "chenjiezi <892774940@qq.com>",
   "license": "ISC",
@@ -44,8 +44,6 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.27.0",
-    "@types/babel__generator": "^7.6.4",
-    "@types/babel__traverse": "^7.18.2",
     "@types/node": "^18.11.7",
     "@vitest/ui": "^0.24.3",
     "eslint": "^8.26.0",
