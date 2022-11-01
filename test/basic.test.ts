@@ -54,3 +54,16 @@ test('return statement', async () => {
   `)
 })
 
+test('multiple the same require', async () => {
+  const source = `
+    const foo = require('./a/b.js')
+    const foo2 = require('./a/b.js')
+  `
+  const { code } = await requireSupport().transform(source)
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_b from \\"./a/b.js\\";
+    const foo = hash_b;
+    const foo2 = hash_b;"
+  `)
+})
+

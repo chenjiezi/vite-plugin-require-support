@@ -6,7 +6,7 @@ import type * as myType from './types'
 import { handleBinaryExpression, parseRequirePath } from './utils'
 
 const pluginName = 'vite-plugin-require-support'
-const importVariableHash = 'hash'
+const importVariableHash = 'hash' // TODO: 生成hash规则
 
 export default function (configuration: myType.Configuration = { filters: /.ts$/ }) {
   return {
@@ -48,10 +48,14 @@ export default function (configuration: myType.Configuration = { filters: /.ts$/
             }
 
             const originalPath = !isTemplateLiteral && !isBinaryExpression ? argument.value : templateLiteral
-            // parse requirePath
-            const pathElement = parseRequirePath(originalPath)
-            const moduleVariable = `${importVariableHash}_${pathElement.moduleId}`
-            requireList.unshift({ originalPath, moduleVariable, pathElement })
+            const existRequrie = requireList.find(item => item.originalPath === originalPath)
+            let moduleVariable = existRequrie?.moduleVariable
+            if (!existRequrie) {
+              // parse requirePath
+              const pathElement = parseRequirePath(originalPath)
+              moduleVariable = `${importVariableHash}_${pathElement.moduleId}`
+              requireList.unshift({ originalPath, moduleVariable, pathElement })
+            }
 
             // case: const foo = require('module') || const obj = { foo: require('module') }
             if (
