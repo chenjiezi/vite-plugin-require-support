@@ -15,7 +15,14 @@ test('export', async () => {
    * const bar = hash_module2_b
    */
   const { code } = await requireSupport().transform(source)
-  expect(code).toMatchInlineSnapshot()
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_module1 from \\"module1\\";
+    import hash_module1 from \\"module1\\";
+    import hash_module2 from \\"module2\\";
+    const foo = require('module1').a;
+    const foo1 = hash_module1;
+    const bar = require('module2').b;"
+  `)
 })
 
 test('export2', async () => {
@@ -35,7 +42,12 @@ test('export2', async () => {
    * const bar3 = foo.b()
    */
   const { code } = await requireSupport().transform(source)
-  expect(code).toMatchInlineSnapshot()
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_module1 from \\"module1\\";
+    const foo = hash_module1;
+    const bar = foo.a();
+    const bar3 = foo.b();"
+  `)
 })
 
 test('export3', async () => {
@@ -53,7 +65,14 @@ test('export3', async () => {
    * bar()
    */
   const { code } = await requireSupport().transform(source)
-  expect(code).toMatchInlineSnapshot()
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_module1 from \\"module1\\";
+    import hash_module1 from \\"module1\\";
+    const foo = hash_module1;
+    const bar = require('module1').b;
+    foo();
+    bar();"
+  `)
 })
 test('export4', async () => {
   const source = `
@@ -71,5 +90,10 @@ test('export4', async () => {
    * bar()
    */
   const { code } = await requireSupport().transform(source)
-  expect(code).toMatchInlineSnapshot()
+  expect(code).toMatchInlineSnapshot(`
+    "import hash_module1 from \\"module1\\";
+    const foo = hash_module1;
+    const bar = foo.b;
+    bar();"
+  `)
 })
