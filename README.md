@@ -1,5 +1,5 @@
 <br>
-<h2 align="center">vite-plugin-require-support(WIP)</h2>
+<h2 align="center">vite-plugin-require-support</h2>
 <br>
 
 A vite plugin supports the use of `require syntax` in vite.
