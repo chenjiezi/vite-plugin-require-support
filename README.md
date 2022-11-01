@@ -33,6 +33,10 @@ export default defineConfig({
 });
 ```
 
+## Doing
+- [ ] ModuleVariable need to generate hash.
+- [ ] Optimize import mode.
+
 ## Design
 
 ```
@@ -101,10 +105,6 @@ export default defineConfig({
     + const a = SDC_foo_a
     + const b = SKDsk_foo_b
   ```
-
-## Doing
-- [ ] ModuleVariable need to generate hash.
-- [ ] Optimize import mode.
 
 ## Git Contribution submission specification
 
