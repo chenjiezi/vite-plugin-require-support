@@ -2,21 +2,21 @@ import { parse } from '@babel/parser'
 import tarverse from '@babel/traverse'
 import generator from '@babel/generator'
 import * as t from '@babel/types'
-import type * as myType from './types'
+import type { Configuration, RequireInfo } from './types'
 import { handleBinaryExpression, parseRequirePath } from './utils'
 
 const pluginName = 'vite-plugin-require-support'
 const importVariableHash = 'hash' // TODO: 生成hash规则
 
-export default function (configuration: myType.Configuration = { filters: /.ts$/ }) {
+export default function (configuration: Configuration = { filters: /.ts$/ }) {
   return {
     name: pluginName,
     async transform(code: string, id?: string | number) {
       let newCode = code
       const ast = parse(code, { sourceType: 'module' })
 
-      const requireList: myType.requireObj[] = []
-      const declarationVariable: myType.Obj = {}
+      const requireMatcher: { [originalPath: string]: RequireInfo } = {}
+      const declarationVariable = {}
 
       tarverse(ast, {
         enter(path) {
@@ -48,37 +48,38 @@ export default function (configuration: myType.Configuration = { filters: /.ts$/
             }
 
             const originalPath = !isTemplateLiteral && !isBinaryExpression ? argument.value : templateLiteral
-            const existRequrie = requireList.find(item => item.originalPath === originalPath)
-            let moduleVariable = existRequrie?.moduleVariable
-            if (!existRequrie) {
+            let moduleVariable = ''
+            if (requireMatcher[originalPath]) {
+              moduleVariable = requireMatcher[originalPath].moduleVariable
+            }
+            else {
               // parse requirePath
               const pathElement = parseRequirePath(originalPath)
               moduleVariable = `${importVariableHash}_${pathElement.moduleId}`
-              requireList.unshift({ originalPath, moduleVariable, pathElement })
+              requireMatcher[originalPath] = { moduleVariable, pathElement }
             }
 
-            // case: const foo = require('module') || const obj = { foo: require('module') }
+            // eg: const foo = require('module')
             if (
               t.isVariableDeclarator(path.parentPath.parentPath)
               || t.isObjectProperty(path.parentPath.parentPath)
               || t.isConditionalExpression(path.parentPath.parentPath)
               || t.isReturnStatement(path.parentPath.parentPath)
+              || t.isMemberExpression(path.parentPath.parentPath)
             ) {
-              // - const foo = require('module') || const obj = { foo: require('module') }
-              // + const foo = hash_module || const obj = { foo: hash_module }
+              // - const foo = require('module')
+              // + const foo = hash_module
               path.parentPath.replaceWithSourceString(moduleVariable)
             }
-
-            // TODO: path.parentPath is memberExpression
           }
         },
       })
 
-      // Inset import at the top of source code.  // TODO: export
+      // Inset import at the top of source code.
       // eg. import hash_foo from 'foo'
-      for (const requireItem of requireList) {
-        const importDefaultSpecifier = t.importDefaultSpecifier(t.identifier(requireItem.moduleVariable))
-        const importDeclaration = t.importDeclaration([importDefaultSpecifier], t.stringLiteral(requireItem.originalPath))
+      for (const item of Object.entries(requireMatcher).reverse()) {
+        const importDefaultSpecifier = t.importDefaultSpecifier(t.identifier(item[1].moduleVariable))
+        const importDeclaration = t.importDeclaration([importDefaultSpecifier], t.stringLiteral(item[0]))
         ast.program.body.unshift(importDeclaration)
       }
 

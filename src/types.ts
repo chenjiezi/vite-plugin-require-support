@@ -4,18 +4,15 @@ export interface Configuration {
   filters?: RegExp
 }
 
-export interface requireObj {
-  originalPath: string
+export interface RequireInfo {
   moduleVariable: string
   pathElement: PathElement
 }
 
 export interface PathElement {
   moduleId: string
-  prefixPath?: string
+  path?: string
   suffix?: string
 }
-
-export interface Obj { [key: string]: string }
 
 export type Leaf = t.BinaryExpression | t.Identifier | t.StringLiteral
