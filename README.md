@@ -4,6 +4,35 @@
 
 A vite plugin supports the use of `require syntax` in vite.
 
+```
+- const foo = require('bar')
++ import hash_bar from 'bar'
++ const foo = hash_bar
+```
+
+
+## Usage
+
+```
+npm install -D vite-plugin-require-support
+```
+
+```
+// vite.config.(t|j)s
+
+import { defineConfig } from 'vite';
+
+import requireSupport from 'vite-plugin-require-support';
+
+export default defineConfig({
+  plugins: [
+    requireSupport({
+      filters: /.ts$|.js$|.tsx$|.vue$/
+    })
+  ],
+});
+```
+
 ## Design
 
 ```
@@ -72,6 +101,10 @@ A vite plugin supports the use of `require syntax` in vite.
     + const a = SDC_foo_a
     + const b = SKDsk_foo_b
   ```
+
+## Doing
+- [ ] ModuleVariable need to generate hash.
+- [ ] Optimize import mode.
 
 ## Git Contribution submission specification
 
