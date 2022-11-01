@@ -1,7 +1,7 @@
 import * as t from '@babel/types'
 import type * as myType from './types'
 
-export const handleBinaryExpression = (argument: t.BinaryExpression, declarationVariable: myType.Obj): string => {
+export const handleBinaryExpression = (argument: t.BinaryExpression, declarationVariable: { [key: string]: string }): string => {
   const left = argument.left as myType.Leaf
   const right = argument.right as myType.Leaf
   const dfs = (leaf: myType.Leaf): string => {
@@ -20,21 +20,21 @@ export const isRawMethodCheck = (methodName: string): boolean => {
     || Object.prototype.toString.call({}[methodName]).includes('Function')
 }
 
-export const parseRequirePath = (path: string): myType.PathElement => {
-  let prefixPath = ''
+export const parseRequirePath = (requirePath: string): myType.PathElement => {
+  let path = ''
   let moduleId = ''
   let suffix = ''
-  path.replace(/(.*\/)*([^.]+).*/ig, (match, a, b) => {
+  requirePath.replace(/(.*\/)*([^.]+).*/ig, (match, a, b) => {
     moduleId = b ?? ''
-    prefixPath = a ?? ''
+    path = a ?? ''
     return ''
   })
-  if (prefixPath.length + moduleId.length < path.length)
-    suffix = path.slice(prefixPath.length + moduleId.length, path.length)
+  if (path.length + moduleId.length < requirePath.length)
+    suffix = requirePath.slice(path.length + moduleId.length, requirePath.length)
 
   return {
     moduleId,
-    prefixPath,
+    path,
     suffix,
   }
 }

@@ -1,7 +1,7 @@
 import type * as t from '@babel/types'
 
 export interface Configuration {
-  filters?: RegExp
+  filters: RegExp
 }
 
 export interface RequireInfo {

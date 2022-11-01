@@ -13,7 +13,7 @@ test('export1', async () => {
     const bar3 = foo.b();
     foo();
   `
-  const { code } = await requireSupport().transform(source)
+  const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
     "import hash_module1 from \\"module1\\";
     const foo = hash_module1;
@@ -33,7 +33,7 @@ test('export2', async () => {
     bar();
     bar2();
   `
-  const { code } = await requireSupport().transform(source)
+  const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
     "import hash_module1 from \\"module1\\";
     const foo = hash_module1;
