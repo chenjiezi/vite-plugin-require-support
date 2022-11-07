@@ -13,9 +13,9 @@ test('isRawMethodCheck', async () => {
 test('parseRequirePath - { moduleId }', async () => {
   const path = 'module'
   expect(parseRequirePath(path)).toMatchInlineSnapshot(`
-    Object {
+    {
       "moduleId": "module",
-      "prefixPath": "",
+      "path": "",
       "suffix": "",
     }
   `)
@@ -24,9 +24,9 @@ test('parseRequirePath - { moduleId }', async () => {
 test('parseRequirePath - { moduleId, suffix }', async () => {
   const path = 'module.js'
   expect(parseRequirePath(path)).toMatchInlineSnapshot(`
-    Object {
+    {
       "moduleId": "module",
-      "prefixPath": "",
+      "path": "",
       "suffix": ".js",
     }
   `)
@@ -35,9 +35,9 @@ test('parseRequirePath - { moduleId, suffix }', async () => {
 test('parseRequirePath - { prefixPath, moduleId, suffix }', async () => {
   const path = './a/b/c/d.js'
   expect(parseRequirePath(path)).toMatchInlineSnapshot(`
-    Object {
+    {
       "moduleId": "d",
-      "prefixPath": "./a/b/c/",
+      "path": "./a/b/c/",
       "suffix": ".js",
     }
   `)
