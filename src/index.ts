@@ -6,7 +6,6 @@ import type { Configuration, RequireInfo } from './types'
 import { handleBinaryExpression, parseRequirePath } from './utils'
 
 const pluginName = 'vite-plugin-require-support'
-const importVariableHash = 'hash' // TODO: 生成hash规则
 
 export default function (configuration: Configuration = { filters: /.ts$/ }) {
   return {
@@ -56,7 +55,7 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
               else {
                 // parse requirePath
                 const pathElement = parseRequirePath(originalPath)
-                moduleVariable = `${importVariableHash}_${pathElement.moduleId.replace(/-/g, '_')}`
+                moduleVariable = `${pluginName.replace(/-/g, '_')}_${pathElement.moduleId.replace(/-/g, '_')}`
                 requireMatcher[originalPath] = { moduleVariable, pathElement }
               }
 
