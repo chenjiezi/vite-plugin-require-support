@@ -18,7 +18,7 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
         const requireMatcher: { [originalPath: string]: RequireInfo } = {}
         const declarationVariable = {}
 
-        traverse.default(ast, {
+        traverse(ast, {
           enter(path) {
             // in order to handle requirePath
             if (t.isStringLiteral(path.node) && t.isVariableDeclarator(path.parentPath?.node)) {
@@ -83,7 +83,7 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
           ast.program.body.unshift(importDeclaration)
         }
 
-        const output = generator.default(ast)
+        const output = generator(ast)
         newCode = output.code
       }
 
