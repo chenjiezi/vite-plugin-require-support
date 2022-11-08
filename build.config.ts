@@ -6,7 +6,7 @@ export default {
   declaration: true,
   clean: true,
   rollup: {
-    emitCJS: true,
+    emitCJS: false,
   },
   failOnWarn: false,
 }
