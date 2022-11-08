@@ -8,10 +8,10 @@ test('variable declaration', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_module1 from \\"module1\\";
-    import hash_module2 from \\"module2\\";
-    const foo = hash_module1;
-    const bar = hash_module2;"
+    "import vite_plugin_require_support_module1 from \\"module1\\";
+    import vite_plugin_require_support_module2 from \\"module2\\";
+    const foo = vite_plugin_require_support_module1;
+    const bar = vite_plugin_require_support_module2;"
   `)
 })
 
@@ -23,9 +23,9 @@ test('object property', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_module1 from \\"module1\\";
+    "import vite_plugin_require_support_module1 from \\"module1\\";
     const obj = {
-      foo: hash_module1
+      foo: vite_plugin_require_support_module1
     };"
   `)
 })
@@ -36,8 +36,8 @@ test('conditional expression', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_bar from \\"bar\\";
-    const foo = true ? hash_bar : '';"
+    "import vite_plugin_require_support_bar from \\"bar\\";
+    const foo = true ? vite_plugin_require_support_bar : '';"
   `)
 })
 
@@ -47,9 +47,9 @@ test('return statement', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_bar from \\"bar\\";
+    "import vite_plugin_require_support_bar from \\"bar\\";
     function foo() {
-      return hash_bar;
+      return vite_plugin_require_support_bar;
     }"
   `)
 })
@@ -61,9 +61,9 @@ test('multiple the same require', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_b from \\"./a/b.js\\";
-    const foo = hash_b;
-    const foo2 = hash_b;"
+    "import vite_plugin_require_support_b from \\"./a/b.js\\";
+    const foo = vite_plugin_require_support_b;
+    const foo2 = vite_plugin_require_support_b;"
   `)
 })
 

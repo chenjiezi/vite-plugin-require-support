@@ -6,8 +6,8 @@ test('string literal', async () => {
   const { code } = await requireSupport().transform(source, '.ts')
 
   expect(code).toMatchInlineSnapshot(`
-    "import hash_b from \\"a/x/b.js\\";
-    const bar = hash_b;"
+    "import vite_plugin_require_support_b from \\"a/x/b.js\\";
+    const bar = vite_plugin_require_support_b;"
   `)
 })
 
@@ -17,10 +17,10 @@ test('template literal', async () => {
   const { code } = await requireSupport().transform(source, '.ts')
 
   expect(code).toMatchInlineSnapshot(`
-    "import hash_b from \\"a/x/b.js\\";
+    "import vite_plugin_require_support_b from \\"a/x/b.js\\";
     const Atl = 'a';
     const Btl = 'b';
-    const bar = hash_b;"
+    const bar = vite_plugin_require_support_b;"
   `)
 })
 
@@ -33,9 +33,9 @@ test('binary expression', async () => {
   const { code } = await requireSupport().transform(source, '.ts')
 
   expect(code).toMatchInlineSnapshot(`
-    "import hash_b from \\"a/x/b\\";
+    "import vite_plugin_require_support_b from \\"a/x/b\\";
     const Atl = 'a';
     const Btl = 'b';
-    const bar = hash_b;"
+    const bar = vite_plugin_require_support_b;"
   `)
 })

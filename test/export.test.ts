@@ -15,8 +15,8 @@ test('export1', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_module1 from \\"module1\\";
-    const foo = hash_module1;
+    "import vite_plugin_require_support_module1 from \\"module1\\";
+    const foo = vite_plugin_require_support_module1;
     const bar = foo.a();
     const bar3 = foo.b();
     foo();"
@@ -35,10 +35,10 @@ test('export2', async () => {
   `
   const { code } = await requireSupport().transform(source, '.ts')
   expect(code).toMatchInlineSnapshot(`
-    "import hash_module1 from \\"module1\\";
-    const foo = hash_module1;
-    const bar = hash_module1.a;
-    const bar2 = hash_module1.b;
+    "import vite_plugin_require_support_module1 from \\"module1\\";
+    const foo = vite_plugin_require_support_module1;
+    const bar = vite_plugin_require_support_module1.a;
+    const bar2 = vite_plugin_require_support_module1.b;
     foo();
     bar();
     bar2();"
