@@ -18,13 +18,9 @@
     "vite",
     "require"
   ],
-  "main": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./dist/index.js",
   "scripts": {
-    "build": "unbuild",
+    "build": "rm -rf dist && tsc",
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -43,7 +39,6 @@
     "bumpp": "^8.2.1",
     "eslint": "^8.26.0",
     "typescript": "^4.8.4",
-    "unbuild": "^0.9.4",
     "vitest": "0.18.0"
   }
 }
