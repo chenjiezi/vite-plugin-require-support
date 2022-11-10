@@ -1,10 +1,6 @@
 import { expect, test } from 'vitest'
 import requireSupport from '../src/index'
 
-/**
- * TODO: 对于单个输出和默认输出，暂时没有好的解决方案
- */
-
 // 只存在单个输出
 test('export1', async () => {
   const source = `

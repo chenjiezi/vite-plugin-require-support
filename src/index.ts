@@ -16,7 +16,7 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
         const ast = parse(code, { sourceType: 'module' })
 
         const requireMatcher: { [originalPath: string]: RequireInfo } = {}
-        const declarationVariable = {}
+        const declarationVariable: { [key: string]: string } = {}
 
         traverse(ast, {
           enter(path) {
