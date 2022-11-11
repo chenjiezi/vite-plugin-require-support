@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-require-support",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "packageManager": "pnpm@7.12.1",
   "description": "a vite plugin supports the use of require syntax.",
   "author": "chenjiezi <892774940@qq.com>",
