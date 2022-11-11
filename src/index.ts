@@ -55,7 +55,12 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
               else {
                 // parse requirePath
                 const pathElement = parseRequirePath(originalPath)
-                moduleVariable = `${pluginName.replace(/-/g, '_')}_${pathElement.moduleId.replace(/-/g, '_')}`
+                let flag = 0
+                for (const { pathElement: { moduleId, path, suffix } } of Object.values(requireMatcher)) {
+                  if (moduleId === pathElement.moduleId && (path !== pathElement.path || suffix !== pathElement.suffix))
+                    flag++
+                }
+                moduleVariable = `${pluginName.replace(/-/g, '_')}_${pathElement.moduleId.replace(/-/g, '_')}_${flag}`
                 requireMatcher[originalPath] = { moduleVariable, pathElement }
               }
 
