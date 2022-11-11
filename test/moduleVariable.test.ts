@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import requireSupport from '../src/index'
 
-test('moduleId same, path or suffix diffrent, ', async () => {
+test('moduleId same, path or suffix diffrent', async () => {
   const source = `
     const foo = require('./a/b.js');
     const bar = require('./c/b.js');
