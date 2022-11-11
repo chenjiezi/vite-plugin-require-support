@@ -47,7 +47,7 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
                 templateLiteral = handleBinaryExpression(argument, declarationVariable)
               }
 
-              const originalPath = !isTemplateLiteral && !isBinaryExpression ? argument.value : templateLiteral
+              let originalPath = !isTemplateLiteral && !isBinaryExpression ? argument.value : templateLiteral
               let moduleVariable = ''
               if (requireMatcher[originalPath]) {
                 moduleVariable = requireMatcher[originalPath].moduleVariable
@@ -60,7 +60,11 @@ export default function (configuration: Configuration = { filters: /.ts$/ }) {
                   if (moduleId === pathElement.moduleId && (path !== pathElement.path || suffix !== pathElement.suffix))
                     flag++
                 }
-                moduleVariable = `${pluginName.replace(/-/g, '_')}_${pathElement.moduleId.replace(/-/g, '_')}_${flag}`
+                moduleVariable = `${pluginName.replace(/-/g, '_')}_${pathElement.moduleId.replace(/-/g, '_').replace(/\//g, '')}_${flag}`
+                // TODO: test
+                if (pathElement.moduleId.endsWith('/'))
+                  originalPath += 'index.js'
+
                 requireMatcher[originalPath] = { moduleVariable, pathElement }
               }
 
